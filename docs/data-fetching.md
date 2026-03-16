@@ -41,8 +41,8 @@ All dates follow a **"store UTC, display local"** strategy. Timestamps are persi
 
 #### Server-Side Queries
 
-- Construct date boundaries with explicit UTC: append the `Z` suffix (e.g., `new Date('2025-03-14T00:00:00.000Z')`) and use UTC methods (`setUTCDate()`, `getUTCHours()`, etc.).
-- **Never** use local timezone methods (`setHours()`, `setDate()`, `getDate()`) for query boundaries — these depend on the server's timezone and will produce incorrect results.
+- When a date string represents a **local calendar date** (e.g., from a URL parameter like `?date=2025-03-14`), construct date boundaries using **local time** — parse with `new Date(year, month - 1, day)` so the boundaries align with the user's local midnight.
+- Do **not** append the `Z` suffix to local calendar dates — `new Date('2025-03-14T00:00:00.000Z')` creates a UTC midnight boundary, which will misalign with local dates for users in non-UTC timezones.
 
 #### Passing Dates to Client Components
 
@@ -78,7 +78,7 @@ export async function getWorkoutById(workoutId: string) {
 }
 ```
 
-**UTC date boundaries** — use `Z` suffix and UTC methods for date-range queries:
+**Local date boundaries** — parse calendar dates in local time for date-range queries:
 
 ```ts
 // src/data/workouts.ts
@@ -90,9 +90,9 @@ import { getAuthenticatedUser } from "@/lib/auth";
 export async function getWorkoutsByDate(dateString: string) {
   const user = await getAuthenticatedUser();
 
-  const dayStart = new Date(`${dateString}T00:00:00.000Z`);
-  const dayEnd = new Date(`${dateString}T00:00:00.000Z`);
-  dayEnd.setUTCDate(dayEnd.getUTCDate() + 1);
+  const [year, month, day] = dateString.split("-").map(Number);
+  const dayStart = new Date(year, month - 1, day);
+  const dayEnd = new Date(year, month - 1, day + 1);
 
   return db.query.workouts.findMany({
     where: and(

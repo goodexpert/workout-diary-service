@@ -68,11 +68,11 @@ export async function duplicateWorkout(
 
   const originalStart = new Date(original.startedAt);
   const newStartedAt = new Date(targetDate);
-  newStartedAt.setUTCHours(
-    originalStart.getUTCHours(),
-    originalStart.getUTCMinutes(),
-    originalStart.getUTCSeconds(),
-    originalStart.getUTCMilliseconds()
+  newStartedAt.setHours(
+    originalStart.getHours(),
+    originalStart.getMinutes(),
+    originalStart.getSeconds(),
+    originalStart.getMilliseconds()
   );
 
   const [newWorkout] = await db
@@ -119,9 +119,9 @@ export async function deleteWorkout(workoutId: string, userId: string) {
 export async function getWorkoutsByDate(dateString: string) {
   const user = await getAuthenticatedUser();
 
-  const dayStart = new Date(`${dateString}T00:00:00.000Z`);
-  const dayEnd = new Date(`${dateString}T00:00:00.000Z`);
-  dayEnd.setUTCDate(dayEnd.getUTCDate() + 1);
+  const [year, month, day] = dateString.split("-").map(Number);
+  const dayStart = new Date(year, month - 1, day);
+  const dayEnd = new Date(year, month - 1, day + 1);
 
   return db.query.workouts.findMany({
     where: and(
