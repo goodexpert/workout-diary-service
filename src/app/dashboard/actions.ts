@@ -1,8 +1,18 @@
 "use server";
 
 import { z } from "zod";
-import { duplicateWorkout } from "@/data/workouts";
+import { deleteWorkout, duplicateWorkout } from "@/data/workouts";
 import { getAuthenticatedUser } from "@/lib/auth";
+
+const DeleteWorkoutSchema = z.object({
+  workoutId: z.string().uuid(),
+});
+
+export async function deleteWorkoutAction(params: { workoutId: string }) {
+  const user = await getAuthenticatedUser();
+  const validated = DeleteWorkoutSchema.parse(params);
+  await deleteWorkout(validated.workoutId, user.id);
+}
 
 const DuplicateWorkoutSchema = z.object({
   workoutId: z.string().uuid(),
