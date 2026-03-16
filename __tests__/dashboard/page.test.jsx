@@ -59,6 +59,7 @@ jest.mock("@/components/ui/popover", () => ({
 
 jest.mock("lucide-react", () => ({
   CalendarIcon: () => <span>CalendarIcon</span>,
+  FilePlusCorner: () => <span>FilePlusCorner</span>,
 }));
 
 import userEvent from "@testing-library/user-event";

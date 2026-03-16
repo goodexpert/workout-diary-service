@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, FilePlusCorner } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -64,7 +64,8 @@ export default function DashboardClient({
         <div className="flex items-center gap-2">
           <Link href="/dashboard/workout/new">
             <Button>
-              Log New Workout
+              <FilePlusCorner className="size-4 md:hidden" />
+              <span className="hidden md:inline">Log New Workout</span>
             </Button>
           </Link>
           <Popover>
@@ -72,7 +73,7 @@ export default function DashboardClient({
               render={<Button variant="outline" className="gap-2" />}
             >
               <CalendarIcon className="size-4" />
-              {format(date, "do MMM yyyy")}
+              <span className="hidden md:inline">{format(date, "do MMM yyyy")}</span>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="end">
               <Calendar
