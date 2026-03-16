@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
@@ -29,7 +29,11 @@ function ceilToNearest30(date: Date): Date {
 export default function NewWorkoutForm() {
   const router = useRouter();
   const [name, setName] = useState("");
-  const [startedAt, setStartedAt] = useState<Date>(() => ceilToNearest30(new Date()));
+  const [startedAt, setStartedAt] = useState<Date | null>(null);
+
+  useEffect(() => {
+    setStartedAt(ceilToNearest30(new Date()));
+  }, []);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -45,7 +49,7 @@ export default function NewWorkoutForm() {
 
     setIsSubmitting(true);
     try {
-      const [created] = await createWorkoutAction({ name: trimmed, startedAt: startedAt.toISOString() });
+      const [created] = await createWorkoutAction({ name: trimmed, startedAt: startedAt!.toISOString() });
       router.push(created ? `/dashboard/workout/${created.id}/edit` : "/dashboard");
     } catch {
       setError("Failed to create workout. Please try again.");
@@ -72,42 +76,44 @@ export default function NewWorkoutForm() {
                 autoFocus
               />
             </div>
-            <div className="space-y-2">
-              <Label>Started At</Label>
-              <Popover>
-                <PopoverTrigger
-                  render={<Button variant="outline" className="w-full justify-between gap-2" />}
-                >
-                  {format(startedAt, "dd/MM/yyyy HH:mm")}
-                  <CalendarIcon className="size-4" />
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={startedAt}
-                    onSelect={(day) => {
-                      if (!day) return;
-                      const updated = new Date(day);
-                      updated.setHours(startedAt.getHours(), startedAt.getMinutes());
-                      setStartedAt(updated);
-                    }}
-                    autoFocus
-                  />
-                  <div className="border-t px-3 py-2">
-                    <Input
-                      type="time"
-                      value={format(startedAt, "HH:mm")}
-                      onChange={(e) => {
-                        const [hours, minutes] = e.target.value.split(":").map(Number);
-                        const updated = new Date(startedAt);
-                        updated.setHours(hours, minutes);
+            {startedAt && (
+              <div className="space-y-2">
+                <Label>Started At</Label>
+                <Popover>
+                  <PopoverTrigger
+                    render={<Button variant="outline" className="w-full justify-between gap-2" />}
+                  >
+                    {format(startedAt, "dd/MM/yyyy HH:mm")}
+                    <CalendarIcon className="size-4" />
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={startedAt}
+                      onSelect={(day) => {
+                        if (!day) return;
+                        const updated = new Date(day);
+                        updated.setHours(startedAt.getHours(), startedAt.getMinutes());
                         setStartedAt(updated);
                       }}
+                      autoFocus
                     />
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </div>
+                    <div className="border-t px-3 py-2">
+                      <Input
+                        type="time"
+                        value={format(startedAt, "HH:mm")}
+                        onChange={(e) => {
+                          const [hours, minutes] = e.target.value.split(":").map(Number);
+                          const updated = new Date(startedAt);
+                          updated.setHours(hours, minutes);
+                          setStartedAt(updated);
+                        }}
+                      />
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            )}
             {error && (
               <p className="text-sm text-destructive">{error}</p>
             )}
