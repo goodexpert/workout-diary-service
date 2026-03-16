@@ -1,6 +1,6 @@
 import { and, eq, gte, lt } from "drizzle-orm";
 import db from "@/db";
-import { workouts } from "@/db/schema";
+import { workouts, workoutExercises, sets } from "@/db/schema";
 import { getAuthenticatedUser } from "@/lib/auth";
 
 export async function getWorkoutById(id: string) {
@@ -47,6 +47,67 @@ export async function updateWorkout(
 
 export async function createWorkout(data: { name: string; userId: string; startedAt: Date }) {
   return db.insert(workouts).values(data).returning();
+}
+
+export async function duplicateWorkout(
+  workoutId: string,
+  targetDate: Date,
+  userId: string
+) {
+  const original = await db.query.workouts.findFirst({
+    where: and(eq(workouts.id, workoutId), eq(workouts.userId, userId)),
+    with: {
+      workoutExercises: {
+        with: { sets: true },
+        orderBy: (we, { asc }) => [asc(we.order)],
+      },
+    },
+  });
+
+  if (!original) throw new Error("Workout not found");
+
+  const originalStart = new Date(original.startedAt);
+  const newStartedAt = new Date(targetDate);
+  newStartedAt.setUTCHours(
+    originalStart.getUTCHours(),
+    originalStart.getUTCMinutes(),
+    originalStart.getUTCSeconds(),
+    originalStart.getUTCMilliseconds()
+  );
+
+  const [newWorkout] = await db
+    .insert(workouts)
+    .values({
+      userId,
+      name: original.name,
+      startedAt: newStartedAt,
+      completedAt: null,
+    })
+    .returning();
+
+  for (const we of original.workoutExercises) {
+    const [newWe] = await db
+      .insert(workoutExercises)
+      .values({
+        workoutId: newWorkout.id,
+        exerciseId: we.exerciseId,
+        order: we.order,
+      })
+      .returning();
+
+    if (we.sets.length > 0) {
+      await db.insert(sets).values(
+        we.sets.map((s) => ({
+          workoutExerciseId: newWe.id,
+          setNumber: s.setNumber,
+          weight: s.weight,
+          reps: s.reps,
+        }))
+      );
+    }
+  }
+
+  return newWorkout;
 }
 
 export async function getWorkoutsByDate(dateString: string) {

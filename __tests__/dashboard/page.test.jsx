@@ -60,6 +60,21 @@ jest.mock("@/components/ui/popover", () => ({
 jest.mock("lucide-react", () => ({
   CalendarIcon: () => <span>CalendarIcon</span>,
   FilePlusCorner: () => <span>FilePlusCorner</span>,
+  Copy: () => <span>CopyIcon</span>,
+}));
+
+jest.mock("@/components/ui/dialog", () => ({
+  Dialog: ({ children }) => <div>{children}</div>,
+  DialogTrigger: ({ children }) => <button>{children}</button>,
+  DialogContent: ({ children }) => <div>{children}</div>,
+  DialogHeader: ({ children }) => <div>{children}</div>,
+  DialogTitle: ({ children }) => <h2>{children}</h2>,
+  DialogFooter: ({ children }) => <div>{children}</div>,
+  DialogClose: ({ children }) => <button>{children}</button>,
+}));
+
+jest.mock("@/app/dashboard/actions", () => ({
+  duplicateWorkoutAction: jest.fn().mockResolvedValue({ id: "new-workout-id" }),
 }));
 
 import userEvent from "@testing-library/user-event";
@@ -188,4 +203,45 @@ describe("DashboardClient", () => {
 
     expect(push).not.toHaveBeenCalled();
   });
+
+  it("renders duplicate button on each workout card", () => {
+    const workouts = [
+      {
+        id: "w1",
+        name: "Upper Body",
+        startedAt: new Date("2026-03-16T09:00:00"),
+        completedAt: null,
+        workoutExercises: [],
+      },
+      {
+        id: "w2",
+        name: "Leg Day",
+        startedAt: new Date("2026-03-16T14:00:00"),
+        completedAt: null,
+        workoutExercises: [],
+      },
+    ];
+
+    render(<DashboardClient dateString="2026-03-16" workouts={workouts} />);
+
+    const copyIcons = screen.getAllByText("CopyIcon");
+    expect(copyIcons).toHaveLength(2);
+  });
+
+  it("renders duplicate workout dialog title", () => {
+    const workouts = [
+      {
+        id: "w1",
+        name: "Upper Body",
+        startedAt: new Date("2026-03-16T09:00:00"),
+        completedAt: null,
+        workoutExercises: [],
+      },
+    ];
+
+    render(<DashboardClient dateString="2026-03-16" workouts={workouts} />);
+
+    expect(screen.getByText("Duplicate Workout")).toBeInTheDocument();
+  });
+
 });

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { CalendarIcon, FilePlusCorner } from "lucide-react";
+import DuplicateWorkoutDialog from "./duplicate-workout-dialog";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -102,7 +103,12 @@ export default function DashboardClient({
               <Card>
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle className="font-bold">{workout.name}</CardTitle>
+                    <div className="flex items-center gap-2">
+                      <CardTitle className="font-bold">{workout.name}</CardTitle>
+                      <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+                        <DuplicateWorkoutDialog workoutId={workout.id} />
+                      </div>
+                    </div>
                     <span className="text-sm text-muted-foreground" suppressHydrationWarning>
                       {format(workout.startedAt, "h:mm a")}
                     </span>

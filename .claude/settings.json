@@ -12,6 +12,7 @@
       "Bash(npm run:*)",
       "Bash(npm test:*)",
       "Bash(npx drizzle-kit:*)",
+      "Bash(npx jest:*)",
       "Bash(npx next:*)",
       "Bash(npx shadcn@latest:*)",
       "Bash(npx tsc:*)",
