@@ -323,7 +323,7 @@ export default function WorkoutForm({
                 </PopoverContent>
               </Popover>
             ) : (
-              <span>{format(startedAt, "do MMM yyyy, h:mm a")}</span>
+              <span suppressHydrationWarning>{format(startedAt, "do MMM yyyy, h:mm a")}</span>
             )}
             <span>&middot;</span>
             {isEditing ? (

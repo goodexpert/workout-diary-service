@@ -103,7 +103,7 @@ export default function DashboardClient({
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="font-bold">{workout.name}</CardTitle>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-sm text-muted-foreground" suppressHydrationWarning>
                       {format(workout.startedAt, "h:mm a")}
                     </span>
                   </div>
