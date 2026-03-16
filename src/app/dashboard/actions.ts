@@ -27,7 +27,7 @@ export async function duplicateWorkoutAction(params: {
   const validated = DuplicateWorkoutSchema.parse(params);
   return duplicateWorkout(
     validated.workoutId,
-    new Date(`${validated.targetDate}T00:00:00.000Z`),
+    new Date(`${validated.targetDate}T00:00:00`),
     user.id
   );
 }
