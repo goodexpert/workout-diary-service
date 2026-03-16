@@ -8,8 +8,9 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
+import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { SettingsInitializer } from "@/components/settings-initializer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -58,11 +59,12 @@ export default function RootLayout({
                 </Show>
                 <Show when="signed-in">
                   <UserButton />
+                  <SettingsInitializer />
                 </Show>
-                <ThemeToggle />
               </div>
             </header>
             {children}
+            <Toaster />
           </ClerkProvider>
         </ThemeProvider>
       </body>

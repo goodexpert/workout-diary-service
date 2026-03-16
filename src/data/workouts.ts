@@ -1,4 +1,5 @@
 import { and, eq, gte, lt } from "drizzle-orm";
+import { fromZonedTime } from "date-fns-tz";
 import db from "@/db";
 import { workouts, workoutExercises, sets } from "@/db/schema";
 import { getAuthenticatedUser } from "@/lib/auth";
@@ -116,12 +117,20 @@ export async function deleteWorkout(workoutId: string, userId: string) {
     .where(and(eq(workouts.id, workoutId), eq(workouts.userId, userId)));
 }
 
-export async function getWorkoutsByDate(dateString: string) {
+export async function getWorkoutsByDate(dateString: string, timezone?: string) {
   const user = await getAuthenticatedUser();
 
   const [year, month, day] = dateString.split("-").map(Number);
-  const dayStart = new Date(year, month - 1, day);
-  const dayEnd = new Date(year, month - 1, day + 1);
+  let dayStart: Date;
+  let dayEnd: Date;
+
+  if (timezone) {
+    dayStart = fromZonedTime(new Date(year, month - 1, day), timezone);
+    dayEnd = fromZonedTime(new Date(year, month - 1, day + 1), timezone);
+  } else {
+    dayStart = new Date(year, month - 1, day);
+    dayEnd = new Date(year, month - 1, day + 1);
+  }
 
   return db.query.workouts.findMany({
     where: and(

@@ -22,8 +22,12 @@ jest.mock("@/components/theme-provider", () => ({
   ThemeProvider: ({ children }) => <div>{children}</div>,
 }));
 
-jest.mock("@/components/theme-toggle", () => ({
-  ThemeToggle: () => <button>ThemeToggle</button>,
+jest.mock("@/components/settings-initializer", () => ({
+  SettingsInitializer: () => null,
+}));
+
+jest.mock("@/components/ui/sonner", () => ({
+  Toaster: () => null,
 }));
 
 import RootLayout from "@/app/layout";
@@ -72,16 +76,6 @@ describe("RootLayout", () => {
 
     expect(screen.getByText("Sign In")).toBeInTheDocument();
     expect(screen.getByText("Sign Up")).toBeInTheDocument();
-  });
-
-  it("renders theme toggle", () => {
-    render(
-      <RootLayout>
-        <div>Content</div>
-      </RootLayout>
-    );
-
-    expect(screen.getByText("ThemeToggle")).toBeInTheDocument();
   });
 
   it("renders UserButton for signed-in state", () => {
