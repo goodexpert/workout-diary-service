@@ -89,3 +89,15 @@ export const setsRelations = relations(sets, ({ one }) => ({
     references: [workoutExercises.id],
   }),
 }));
+
+// ── User Settings ──────────────────────────────────────────────────────────
+
+export const userSettings = pgTable('user_settings', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: varchar('user_id', { length: 255 }).notNull().unique(),
+  country: varchar('country', { length: 255 }),
+  city: varchar('city', { length: 255 }),
+  timezone: varchar('timezone', { length: 100 }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull().$onUpdate(() => new Date()),
+});

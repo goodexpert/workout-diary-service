@@ -62,6 +62,7 @@ jest.mock("lucide-react", () => ({
   FilePlusCorner: () => <span>FilePlusCorner</span>,
   Copy: () => <span>CopyIcon</span>,
   Trash2: () => <span>TrashIcon</span>,
+  Settings: () => <span>SettingsIcon</span>,
 }));
 
 jest.mock("@/components/ui/dialog", () => ({

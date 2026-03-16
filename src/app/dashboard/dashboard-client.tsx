@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
-import { CalendarIcon, FilePlusCorner } from "lucide-react";
+import { CalendarIcon, FilePlusCorner, Settings } from "lucide-react";
 import DeleteWorkoutDialog from "./delete-workout-dialog";
 import DuplicateWorkoutDialog from "./duplicate-workout-dialog";
 import { Button } from "@/components/ui/button";
@@ -86,6 +86,11 @@ export default function DashboardClient({
               />
             </PopoverContent>
           </Popover>
+          <Link href="/dashboard/settings">
+            <Button variant="outline" size="icon">
+              <Settings className="size-4" />
+            </Button>
+          </Link>
         </div>
       </div>
 
