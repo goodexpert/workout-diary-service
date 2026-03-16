@@ -9,15 +9,15 @@ jest.mock("next/navigation", () => ({
   redirect: jest.fn(),
 }));
 
-jest.mock("../src/lib/auth", () => ({
-  getAuthenticatedUser: jest.fn().mockRejectedValue(new Error("Not authenticated")),
+jest.mock("@/lib/auth", () => ({
+  getAuthenticatedUser: jest.fn(),
 }));
 
-jest.mock("../src/components/ui/button", () => ({
+jest.mock("@/components/ui/button", () => ({
   Button: ({ children, ...props }) => <button {...props}>{children}</button>,
 }));
 
-jest.mock("../src/components/ui/card", () => ({
+jest.mock("@/components/ui/card", () => ({
   Card: ({ children, ...props }) => <div {...props}>{children}</div>,
   CardHeader: ({ children, ...props }) => <div {...props}>{children}</div>,
   CardTitle: ({ children, ...props }) => <h3 {...props}>{children}</h3>,
@@ -30,9 +30,16 @@ jest.mock("lucide-react", () => ({
   CalendarSearch: () => <span>CalendarSearch</span>,
 }));
 
-import Home from "../src/app/page";
+import { redirect } from "next/navigation";
+import { getAuthenticatedUser } from "@/lib/auth";
+import Home from "@/app/page";
 
 describe("Home", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    getAuthenticatedUser.mockRejectedValue(new Error("Not authenticated"));
+  });
+
   it("renders the home page", async () => {
     const HomeComponent = await Home();
     render(HomeComponent);
@@ -49,5 +56,13 @@ describe("Home", () => {
     expect(screen.getByText("Track Workouts")).toBeInTheDocument();
     expect(screen.getByText("Monitor Sets & Reps")).toBeInTheDocument();
     expect(screen.getByText("Review Progress")).toBeInTheDocument();
+  });
+
+  it("redirects to dashboard when authenticated", async () => {
+    getAuthenticatedUser.mockResolvedValue({ id: "user-1" });
+
+    await Home();
+
+    expect(redirect).toHaveBeenCalledWith("/dashboard");
   });
 });
