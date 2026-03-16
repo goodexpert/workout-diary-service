@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 import { getWorkoutsByDate } from "@/data/workouts";
 import { getUserSettings } from "@/data/user-settings";
 import { getAuthenticatedUser } from "@/lib/auth";
@@ -16,7 +17,11 @@ export default async function DashboardPage({
 
   const { date: dateParam } = await searchParams;
 
-  const dateString = dateParam ?? format(new Date(), "yyyy-MM-dd");
+  const dateString = dateParam ?? (
+    settings?.timezone
+      ? formatInTimeZone(new Date(), settings.timezone, "yyyy-MM-dd")
+      : format(new Date(), "yyyy-MM-dd")
+  );
   const workouts = await getWorkoutsByDate(dateString, settings?.timezone ?? undefined);
 
   return <DashboardClient dateString={dateString} workouts={workouts} />;
