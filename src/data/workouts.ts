@@ -110,6 +110,12 @@ export async function duplicateWorkout(
   return newWorkout;
 }
 
+export async function deleteWorkout(workoutId: string, userId: string) {
+  return db
+    .delete(workouts)
+    .where(and(eq(workouts.id, workoutId), eq(workouts.userId, userId)));
+}
+
 export async function getWorkoutsByDate(dateString: string) {
   const user = await getAuthenticatedUser();
 

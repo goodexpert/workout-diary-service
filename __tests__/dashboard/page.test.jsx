@@ -61,6 +61,7 @@ jest.mock("lucide-react", () => ({
   CalendarIcon: () => <span>CalendarIcon</span>,
   FilePlusCorner: () => <span>FilePlusCorner</span>,
   Copy: () => <span>CopyIcon</span>,
+  Trash2: () => <span>TrashIcon</span>,
 }));
 
 jest.mock("@/components/ui/dialog", () => ({
@@ -75,6 +76,7 @@ jest.mock("@/components/ui/dialog", () => ({
 
 jest.mock("@/app/dashboard/actions", () => ({
   duplicateWorkoutAction: jest.fn().mockResolvedValue({ id: "new-workout-id" }),
+  deleteWorkoutAction: jest.fn().mockResolvedValue(undefined),
 }));
 
 import userEvent from "@testing-library/user-event";
@@ -124,8 +126,8 @@ describe("DashboardClient", () => {
 
     render(<DashboardClient dateString="2026-03-16" workouts={workouts} />);
 
-    expect(screen.getByText("Upper Body")).toBeInTheDocument();
-    expect(screen.getByText("Leg Day")).toBeInTheDocument();
+    expect(screen.getAllByText("Upper Body").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("Leg Day").length).toBeGreaterThanOrEqual(1);
   });
 
   it("shows completion badge for completed workouts", () => {
