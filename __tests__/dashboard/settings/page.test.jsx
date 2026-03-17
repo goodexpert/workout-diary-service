@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn().mockReturnValue({ push: jest.fn(), refresh: jest.fn() }),
+  useSearchParams: jest.fn().mockReturnValue(new URLSearchParams()),
 }));
 
 jest.mock("next-themes", () => ({

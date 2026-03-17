@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,9 @@ function ceilToNearest30(date: Date): Date {
 
 export default function NewWorkoutForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const dateParam = searchParams.get("date");
+  const dashboardPath = dateParam ? `/dashboard?date=${dateParam}` : "/dashboard";
   const [name, setName] = useState("");
   const [startedAt, setStartedAt] = useState<Date | null>(null);
 
@@ -50,7 +53,7 @@ export default function NewWorkoutForm() {
     setIsSubmitting(true);
     try {
       const [created] = await createWorkoutAction({ name: trimmed, startedAt: startedAt!.toISOString() });
-      router.push(created ? `/dashboard/workout/${created.id}/edit` : "/dashboard");
+      router.push(created ? `/dashboard/workout/${created.id}/edit${dateParam ? `?date=${dateParam}` : ""}` : dashboardPath);
     } catch {
       setError("Failed to create workout. Please try again.");
     } finally {
@@ -124,7 +127,7 @@ export default function NewWorkoutForm() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => router.push("/dashboard")}
+                onClick={() => router.push(dashboardPath)}
               >
                 Cancel
               </Button>
