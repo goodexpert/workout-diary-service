@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useMemo } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useUser, useClerk } from "@clerk/nextjs";
 import { ArrowLeft, Sun, Moon, Monitor, ExternalLink } from "lucide-react";
@@ -59,6 +59,9 @@ function formatProvider(provider: string) {
 
 export default function SettingsClient({ settings }: SettingsClientProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const dateParam = searchParams.get("date");
+  const dashboardPath = dateParam ? `/dashboard?date=${dateParam}` : "/dashboard";
   const { user } = useUser();
   const clerk = useClerk();
   const { theme = "system", setTheme } = useTheme();
@@ -95,7 +98,7 @@ export default function SettingsClient({ settings }: SettingsClientProps) {
   return (
     <main className="mx-auto max-w-2xl px-4 py-8">
       <div className="mb-6 flex items-center gap-3">
-        <Link href="/dashboard">
+        <Link href={dashboardPath}>
           <Button variant="outline" size="icon">
             <ArrowLeft className="size-4" />
           </Button>

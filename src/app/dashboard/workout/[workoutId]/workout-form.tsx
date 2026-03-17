@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import { PencilIcon, Trash2Icon, PlusIcon, CheckIcon, XIcon, CalendarIcon, CopyIcon } from "lucide-react";
@@ -65,6 +65,9 @@ export default function WorkoutForm({
   exerciseCatalog,
 }: WorkoutFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const dateParam = searchParams.get("date");
+  const dashboardPath = dateParam ? `/dashboard?date=${dateParam}` : "/dashboard";
   const isEditing = mode === "edit";
   const [isEditingName, setIsEditingName] = useState(false);
   const [name, setName] = useState(initialName);
@@ -344,13 +347,13 @@ export default function WorkoutForm({
               {isCompleted ? "Completed" : "Complete Workout"}
             </Button>
           ) : (
-            <Link href={`/dashboard/workout/${workoutId}/edit`}>
+            <Link href={`/dashboard/workout/${workoutId}/edit${dateParam ? `?date=${dateParam}` : ""}`}>
               <Button>Edit Workout</Button>
             </Link>
           )}
           <Button
             variant="outline"
-            onClick={() => router.push("/dashboard")}
+            onClick={() => router.push(dashboardPath)}
           >
             Back to Dashboard
           </Button>

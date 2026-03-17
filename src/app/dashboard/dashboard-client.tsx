@@ -64,7 +64,7 @@ export default function DashboardClient({
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-2xl font-bold">Dashboard</h2>
         <div className="flex items-center gap-2">
-          <Link href="/dashboard/workout/new">
+          <Link href={`/dashboard/workout/new?date=${dateString}`}>
             <Button>
               <FilePlusCorner className="size-4 md:hidden" />
               <span className="hidden md:inline">Log New Workout</span>
@@ -86,7 +86,7 @@ export default function DashboardClient({
               />
             </PopoverContent>
           </Popover>
-          <Link href="/dashboard/settings">
+          <Link href={`/dashboard/settings?date=${dateString}`}>
             <Button variant="outline" size="icon">
               <Settings className="size-4" />
             </Button>
@@ -105,7 +105,7 @@ export default function DashboardClient({
       ) : (
         <div className="space-y-3">
           {workouts.map((workout) => (
-            <Link key={workout.id} href={`/dashboard/workout/${workout.id}`} className="block">
+            <Link key={workout.id} href={`/dashboard/workout/${workout.id}?date=${dateString}`} className="block">
               <Card>
                 <CardHeader>
                   <div className="flex items-center justify-between">

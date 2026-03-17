@@ -5,6 +5,7 @@ const notFoundError = new Error("NEXT_NOT_FOUND");
 jest.mock("next/navigation", () => ({
   notFound: jest.fn(() => { throw notFoundError; }),
   useRouter: jest.fn().mockReturnValue({ push: jest.fn(), refresh: jest.fn() }),
+  useSearchParams: jest.fn().mockReturnValue(new URLSearchParams()),
 }));
 
 jest.mock("@/lib/auth", () => ({
