@@ -66,18 +66,37 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 | `npm run test:watch`   | Run tests in watch mode            |
 | `npm run test:coverage`| Run tests with coverage report     |
 
+## Features
+
+- **Workout Tracking** — Create, view, edit, and delete workout sessions
+- **Exercise & Set Logging** — Add exercises to workouts and log sets with weight and reps
+- **Workout Duplication** — Copy a previous workout to a new date with all exercises and sets
+- **Dashboard** — View workouts by date with calendar navigation
+- **User Settings** — Timezone and location preferences with auto-detection
+- **Dark/Light Theme** — Toggle between themes with system preference support
+- **Authentication** — Clerk-based sign-in/sign-up with protected routes
+
 ## Project Structure
 
 ```
 src/
 ├── app/                  # Next.js App Router pages & layouts
 │   ├── dashboard/        # Authenticated dashboard & workout pages
+│   │   ├── settings/     # User settings (timezone, location)
 │   │   └── workout/      # Workout CRUD (new, view, edit)
 │   ├── layout.tsx        # Root layout (Clerk, theme, header)
 │   └── page.tsx          # Landing page
 ├── components/           # Shared React components
+│   ├── theme-provider.tsx    # Next-themes dark/light mode
+│   ├── theme-toggle.tsx      # Theme toggle button
+│   ├── settings-initializer.tsx # Auto-initialize user settings
 │   └── ui/               # shadcn/ui components
-├── data/                 # Data access layer
+├── data/                 # Data access layer (Drizzle queries)
+│   ├── workouts.ts       # Workout queries & mutations
+│   ├── exercises.ts      # Exercise queries
+│   ├── workout-exercises.ts # Workout-exercise operations
+│   ├── sets.ts           # Set operations
+│   └── user-settings.ts  # User settings operations
 ├── db/                   # Database connection & schema
 └── lib/                  # Utilities (auth, helpers)
 drizzle/                  # Migration files
@@ -91,6 +110,7 @@ docs/                     # Coding standards & design docs
 - **Exercises** — exercise definitions (name, description)
 - **Workout Exercises** — join table linking exercises to a workout with ordering
 - **Sets** — individual sets within a workout exercise (weight, reps)
+- **User Settings** — per-user preferences (timezone, country, city)
 
 ## License
 
