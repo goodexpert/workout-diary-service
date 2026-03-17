@@ -35,8 +35,17 @@ export default function NewWorkoutForm() {
   const [startedAt, setStartedAt] = useState<Date | null>(null);
 
   useEffect(() => {
+    if (dateParam) {
+      const parsed = new Date(dateParam + "T00:00:00");
+      const today = new Date();
+      if (format(parsed, "yyyy-MM-dd") !== format(today, "yyyy-MM-dd")) {
+        parsed.setHours(9, 0, 0, 0);
+        setStartedAt(parsed);
+        return;
+      }
+    }
     setStartedAt(ceilToNearest30(new Date()));
-  }, []);
+  }, [dateParam]);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
