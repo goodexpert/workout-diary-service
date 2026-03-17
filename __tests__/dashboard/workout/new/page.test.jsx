@@ -1,6 +1,8 @@
 import "@testing-library/jest-dom";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useRouter } from "next/navigation";
+import { createWorkoutAction } from "@/app/dashboard/workout/new/actions";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn().mockReturnValue({ push: jest.fn(), refresh: jest.fn() }),
@@ -101,7 +103,6 @@ describe("NewWorkoutForm", () => {
 
   it("navigates to dashboard on cancel click", async () => {
     const push = jest.fn();
-    const { useRouter } = require("next/navigation");
     useRouter.mockReturnValue({ push, refresh: jest.fn() });
 
     const user = userEvent.setup();
@@ -114,10 +115,8 @@ describe("NewWorkoutForm", () => {
 
   it("submits the form with a valid name", async () => {
     const push = jest.fn();
-    const { useRouter } = require("next/navigation");
     useRouter.mockReturnValue({ push, refresh: jest.fn() });
 
-    const { createWorkoutAction } = require("@/app/dashboard/workout/new/actions");
     createWorkoutAction.mockResolvedValue([{ id: "new-workout-1" }]);
 
     const user = userEvent.setup();
@@ -132,10 +131,8 @@ describe("NewWorkoutForm", () => {
 
   it("navigates to dashboard when createWorkoutAction returns null", async () => {
     const push = jest.fn();
-    const { useRouter } = require("next/navigation");
     useRouter.mockReturnValue({ push, refresh: jest.fn() });
 
-    const { createWorkoutAction } = require("@/app/dashboard/workout/new/actions");
     createWorkoutAction.mockResolvedValue([null]);
 
     const user = userEvent.setup();
@@ -148,7 +145,6 @@ describe("NewWorkoutForm", () => {
   });
 
   it("shows error message when createWorkoutAction fails", async () => {
-    const { createWorkoutAction } = require("@/app/dashboard/workout/new/actions");
     createWorkoutAction.mockRejectedValue(new Error("Server error"));
 
     const user = userEvent.setup();
@@ -182,7 +178,6 @@ describe("NewWorkoutForm", () => {
   });
 
   it("updates time when time input changes", () => {
-    const { fireEvent } = require("@testing-library/react");
     render(<NewWorkoutForm />);
 
     const inputs = document.querySelectorAll('input[type="time"]');
