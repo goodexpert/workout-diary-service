@@ -2,8 +2,14 @@ import { test, expect } from '@playwright/test'
 import { test as authTest, expect as authExpect } from '../fixtures/auth'
 
 // ---- Unauthenticated tests ----
+// These tests verify Clerk middleware redirects unauthenticated users.
+// They require CLERK_SECRET_KEY + NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY to be set
+// so that the middleware actually enforces auth. Skip when not configured.
+
+const hasClerkKeys = !!(process.env.CLERK_SECRET_KEY && process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
 
 test.describe('Protected Routes (unauthenticated)', () => {
+  test.skip(!hasClerkKeys, 'Clerk keys not configured — middleware is inactive')
   test.use({ storageState: { cookies: [], origins: [] } })
 
   const protectedRoutes = [
