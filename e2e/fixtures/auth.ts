@@ -1,19 +1,33 @@
-import { test as base } from '@playwright/test';
+import { test as base, expect } from '@playwright/test';
 
 /**
- * Extend the base test with Clerk authentication.
+ * Extend the base test with Clerk authentication via Testing Tokens.
  *
- * Strategy options (choose one when implementing):
+ * Setup:
+ *   1. Enable testing mode in Clerk Dashboard
+ *   2. Set CLERK_TESTING_TOKEN in .env.local
+ *   3. See: https://clerk.com/docs/testing/overview
  *
- * 1. **Clerk Testing Tokens** (recommended)
- *    - Set CLERK_TESTING_TOKEN env var
- *    - Use Clerk's built-in test mode
- *    - See: https://clerk.com/docs/testing/overview
- *
- * 2. **storageState approach**
- *    - Run a setup project that logs in via Clerk UI
- *    - Save session to a JSON file
- *    - Reuse across tests via storageState
+ * When CLERK_TESTING_TOKEN is not set, all authenticated tests are skipped.
  */
-export const test = base;
-export { expect } from '@playwright/test';
+const clerkTestingToken = process.env.CLERK_TESTING_TOKEN;
+
+export const test = base.extend<{ clerkAuth: void }>({
+  clerkAuth: [async ({ page }, use) => {
+    if (!clerkTestingToken) {
+      test.skip(true, 'CLERK_TESTING_TOKEN not set — skipping authenticated test');
+    }
+
+    // Inject the Clerk testing token cookie before navigation
+    await page.context().addCookies([{
+      name: '__clerk_db_jwt',
+      value: clerkTestingToken!,
+      domain: 'localhost',
+      path: '/',
+    }]);
+
+    await use();
+  }, { auto: true }],
+});
+
+export { expect };
