@@ -39,15 +39,18 @@ test.describe('Sign-In Page (unauthenticated)', () => {
     await expect(main.getByRole('button', { name: 'Sign In' })).toBeVisible()
   })
 
-  test('shows OAuth buttons with icons for Google and Apple', async ({ page }) => {
+  test('shows OAuth buttons with icons for Google, Apple, and Facebook', async ({ page }) => {
     await page.goto('/sign-in')
 
     const googleBtn = page.getByRole('button', { name: 'Continue with Google' })
     const appleBtn = page.getByRole('button', { name: 'Continue with Apple' })
+    const facebookBtn = page.getByRole('button', { name: 'Continue with Facebook' })
     await expect(googleBtn).toBeVisible()
     await expect(appleBtn).toBeVisible()
+    await expect(facebookBtn).toBeVisible()
     await expect(googleBtn.locator('svg')).toBeVisible()
     await expect(appleBtn.locator('svg')).toBeVisible()
+    await expect(facebookBtn.locator('svg')).toBeVisible()
   })
 
   test('shows link to sign-up page', async ({ page }) => {
@@ -78,15 +81,18 @@ test.describe('Sign-Up Page (unauthenticated)', () => {
     await expect(main.getByRole('button', { name: 'Sign Up' })).toBeVisible()
   })
 
-  test('shows OAuth buttons with icons for Google and Apple', async ({ page }) => {
+  test('shows OAuth buttons with icons for Google, Apple, and Facebook', async ({ page }) => {
     await page.goto('/sign-up')
 
     const googleBtn = page.getByRole('button', { name: 'Continue with Google' })
     const appleBtn = page.getByRole('button', { name: 'Continue with Apple' })
+    const facebookBtn = page.getByRole('button', { name: 'Continue with Facebook' })
     await expect(googleBtn).toBeVisible()
     await expect(appleBtn).toBeVisible()
+    await expect(facebookBtn).toBeVisible()
     await expect(googleBtn.locator('svg')).toBeVisible()
     await expect(appleBtn.locator('svg')).toBeVisible()
+    await expect(facebookBtn.locator('svg')).toBeVisible()
   })
 
   test('shows link to sign-in page', async ({ page }) => {

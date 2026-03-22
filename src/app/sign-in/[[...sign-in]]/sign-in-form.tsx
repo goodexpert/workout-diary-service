@@ -15,7 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { GoogleIcon, AppleIcon } from "@/components/icons";
+import { GoogleIcon, AppleIcon, FacebookIcon } from "@/components/icons";
 
 export function SignInForm() {
   const router = useRouter();
@@ -55,7 +55,7 @@ export function SignInForm() {
     }
   }
 
-  async function handleOAuth(strategy: "oauth_google" | "oauth_apple") {
+  async function handleOAuth(strategy: "oauth_google" | "oauth_apple" | "oauth_facebook") {
     if (!isLoaded) return;
 
     try {
@@ -95,6 +95,14 @@ export function SignInForm() {
           >
             <AppleIcon className="size-4" />
             Continue with Apple
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => handleOAuth("oauth_facebook")}
+            disabled={!isLoaded}
+          >
+            <FacebookIcon className="size-4" />
+            Continue with Facebook
           </Button>
         </div>
 

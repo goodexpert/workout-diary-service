@@ -16,7 +16,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
-import { GoogleIcon, AppleIcon } from "@/components/icons";
+import { GoogleIcon, AppleIcon, FacebookIcon } from "@/components/icons";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -74,6 +74,8 @@ function ProviderIcon({ provider, className }: { provider: string; className?: s
       return <GoogleIcon className={className} />;
     case "apple":
       return <AppleIcon className={className} />;
+    case "facebook":
+      return <FacebookIcon className={className} />;
     default:
       return null;
   }
@@ -208,7 +210,7 @@ export default function SettingsClient({ settings }: SettingsClientProps) {
   }
 
   async function handleConnectAccount(
-    strategy: "oauth_google" | "oauth_apple"
+    strategy: "oauth_google" | "oauth_apple" | "oauth_facebook"
   ) {
     if (!user) return;
     setIsConnecting(true);
@@ -489,6 +491,15 @@ export default function SettingsClient({ settings }: SettingsClientProps) {
               >
                 <AppleIcon className="size-4" />
                 Connect Apple
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleConnectAccount("oauth_facebook")}
+                disabled={isConnecting}
+              >
+                <FacebookIcon className="size-4" />
+                Connect Facebook
               </Button>
             </div>
           </CardContent>

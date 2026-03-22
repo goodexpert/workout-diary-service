@@ -61,6 +61,7 @@ jest.mock("lucide-react", () => ({
 jest.mock("@/components/icons", () => ({
   GoogleIcon: (props) => <span data-testid="google-icon" {...props}>GoogleIcon</span>,
   AppleIcon: (props) => <span data-testid="apple-icon" {...props}>AppleIcon</span>,
+  FacebookIcon: (props) => <span data-testid="facebook-icon" {...props}>FacebookIcon</span>,
 }));
 
 jest.mock("@/components/ui/button", () => ({

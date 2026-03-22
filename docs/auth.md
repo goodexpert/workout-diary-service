@@ -19,7 +19,7 @@ This app uses [Clerk](https://clerk.com/) for all authentication. Do not use any
 ### Client-Side Components
 
 - Custom auth pages replace Clerk's prebuilt UI:
-  - `/sign-in` — Custom sign-in page using `useSignIn()` hook (email/password + Google/Apple OAuth)
+  - `/sign-in` — Custom sign-in page using `useSignIn()` hook (email/password + Google/Apple/Facebook OAuth)
   - `/sign-up` — Custom sign-up page using `useSignUp()` hook with email verification flow
   - SSO callback pages at `/sign-in/sso-callback` and `/sign-up/sso-callback` handle OAuth redirects via `AuthenticateWithRedirectCallback`
 - The `<HeaderAuth />` component in the root layout handles signed-in/signed-out state:
