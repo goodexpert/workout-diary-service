@@ -27,6 +27,115 @@ test.describe('Protected Routes (unauthenticated)', () => {
   }
 })
 
+test.describe('Sign-In Page (unauthenticated)', () => {
+  test('shows sign-in form with email and password fields', async ({ page }) => {
+    await page.goto('/sign-in')
+
+    // CardTitle renders as <div>, so use locator within main content area
+    const main = page.locator('main')
+    await expect(main.getByText('Sign In').first()).toBeVisible()
+    await expect(page.getByLabel('Email')).toBeVisible()
+    await expect(page.getByLabel('Password')).toBeVisible()
+    await expect(main.getByRole('button', { name: 'Sign In' })).toBeVisible()
+  })
+
+  test('shows OAuth buttons with icons for Google and Apple', async ({ page }) => {
+    await page.goto('/sign-in')
+
+    const googleBtn = page.getByRole('button', { name: 'Continue with Google' })
+    const appleBtn = page.getByRole('button', { name: 'Continue with Apple' })
+    await expect(googleBtn).toBeVisible()
+    await expect(appleBtn).toBeVisible()
+    await expect(googleBtn.locator('svg')).toBeVisible()
+    await expect(appleBtn.locator('svg')).toBeVisible()
+  })
+
+  test('shows link to sign-up page', async ({ page }) => {
+    await page.goto('/sign-in')
+
+    const signUpLink = page.getByRole('link', { name: 'Sign up' })
+    await expect(signUpLink).toBeVisible()
+    await expect(signUpLink).toHaveAttribute('href', '/sign-up')
+  })
+
+  test('shows separator between OAuth and email form', async ({ page }) => {
+    await page.goto('/sign-in')
+
+    await expect(page.getByText('or', { exact: true })).toBeVisible()
+  })
+})
+
+test.describe('Sign-Up Page (unauthenticated)', () => {
+  test('shows sign-up form with all fields', async ({ page }) => {
+    await page.goto('/sign-up')
+
+    const main = page.locator('main')
+    await expect(main.getByText('Sign Up').first()).toBeVisible()
+    await expect(page.getByLabel('First Name')).toBeVisible()
+    await expect(page.getByLabel('Last Name')).toBeVisible()
+    await expect(page.getByLabel('Email')).toBeVisible()
+    await expect(page.getByLabel('Password')).toBeVisible()
+    await expect(main.getByRole('button', { name: 'Sign Up' })).toBeVisible()
+  })
+
+  test('shows OAuth buttons with icons for Google and Apple', async ({ page }) => {
+    await page.goto('/sign-up')
+
+    const googleBtn = page.getByRole('button', { name: 'Continue with Google' })
+    const appleBtn = page.getByRole('button', { name: 'Continue with Apple' })
+    await expect(googleBtn).toBeVisible()
+    await expect(appleBtn).toBeVisible()
+    await expect(googleBtn.locator('svg')).toBeVisible()
+    await expect(appleBtn.locator('svg')).toBeVisible()
+  })
+
+  test('shows link to sign-in page', async ({ page }) => {
+    await page.goto('/sign-up')
+
+    const signInLink = page.getByRole('link', { name: 'Sign in' })
+    await expect(signInLink).toBeVisible()
+    await expect(signInLink).toHaveAttribute('href', '/sign-in')
+  })
+
+  test('shows separator between OAuth and email form', async ({ page }) => {
+    await page.goto('/sign-up')
+
+    await expect(page.getByText('or', { exact: true })).toBeVisible()
+  })
+})
+
+test.describe('Header Auth — Unauthenticated', () => {
+  test('shows Sign In and Sign Up links in header', async ({ page }) => {
+    await page.goto('/')
+
+    const header = page.locator('header')
+    await expect(header.getByRole('link', { name: 'Sign In' })).toBeVisible()
+    await expect(header.getByRole('link', { name: 'Sign Up' })).toBeVisible()
+  })
+
+  test('Sign In link navigates to sign-in page', async ({ page }) => {
+    await page.goto('/')
+
+    const header = page.locator('header')
+    await header.getByRole('link', { name: 'Sign In' }).click()
+
+    await page.waitForURL(/\/sign-in/)
+    const main = page.locator('main')
+    await expect(main.getByText('Sign In').first()).toBeVisible()
+  })
+
+  test('Sign Up link navigates to sign-up page', async ({ page }) => {
+    await page.goto('/')
+
+    const header = page.locator('header')
+    await header.getByRole('link', { name: 'Sign Up' }).click()
+
+    await page.waitForURL(/\/sign-up/)
+    const main = page.locator('main')
+    await expect(main.getByText('Sign Up').first()).toBeVisible()
+  })
+})
+
 // ---- Authenticated tests ----
 
 authTest.describe('Authenticated User', () => {

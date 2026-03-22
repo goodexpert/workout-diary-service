@@ -13,6 +13,7 @@
       "Bash(npx drizzle-kit:*)",
       "Bash(npx jest:*)",
       "Bash(npx next:*)",
+      "Bash(npx playwright:*)",
       "Bash(npx shadcn@latest:*)",
       "Bash(npx tsc:*)",
       "mcp__neon__get_database_tables",

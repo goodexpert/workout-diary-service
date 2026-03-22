@@ -18,7 +18,7 @@ jest.mock("@/components/ui/button", () => ({
 
 let dialogOnOpenChange;
 jest.mock("@/components/ui/dialog", () => ({
-  Dialog: ({ children, open, onOpenChange }) => {
+  Dialog: ({ children, onOpenChange }) => {
     dialogOnOpenChange = onOpenChange;
     return <div>{children}</div>;
   },

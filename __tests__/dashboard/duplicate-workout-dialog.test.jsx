@@ -35,7 +35,7 @@ jest.mock("@/components/ui/calendar", () => ({
 
 let dialogOnOpenChange;
 jest.mock("@/components/ui/dialog", () => ({
-  Dialog: ({ children, open, onOpenChange }) => {
+  Dialog: ({ children, onOpenChange }) => {
     dialogOnOpenChange = onOpenChange;
     return <div>{children}</div>;
   },

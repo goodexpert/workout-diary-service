@@ -26,11 +26,60 @@ test.describe('Settings — Navigation', () => {
 })
 
 test.describe('Settings — Profile', () => {
-  test('shows profile card with manage account button', async ({ page }) => {
+  test('shows profile card with user info and edit button', async ({ page }) => {
     await page.goto('/dashboard/settings')
 
     await expect(page.getByText('Profile')).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Manage Account' })).toBeVisible()
+    // Pencil icon edit button replaces the old "Manage Account" button
+    await expect(page.getByRole('button').filter({ has: page.locator('.lucide-pencil') })).toBeVisible()
+  })
+
+  test('clicking edit shows inline name fields', async ({ page }) => {
+    await page.goto('/dashboard/settings')
+
+    await page.getByRole('button').filter({ has: page.locator('.lucide-pencil') }).click()
+
+    await expect(page.getByLabel('First Name')).toBeVisible()
+    await expect(page.getByLabel('Last Name')).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Save' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible()
+  })
+
+  test('cancel edit hides name fields', async ({ page }) => {
+    await page.goto('/dashboard/settings')
+
+    await page.getByRole('button').filter({ has: page.locator('.lucide-pencil') }).click()
+    await expect(page.getByLabel('First Name')).toBeVisible()
+
+    await page.getByRole('button', { name: 'Cancel' }).click()
+
+    await expect(page.getByLabel('First Name')).not.toBeVisible()
+  })
+
+  test('shows avatar with camera upload button', async ({ page }) => {
+    await page.goto('/dashboard/settings')
+
+    await expect(page.getByRole('button').filter({ has: page.locator('.lucide-camera') })).toBeVisible()
+  })
+})
+
+test.describe('Settings — Password', () => {
+  test('shows password management card', async ({ page }) => {
+    await page.goto('/dashboard/settings')
+
+    // Title is either "Change Password" or "Set Password" depending on user
+    const changePassword = page.getByText('Change Password')
+    const setPassword = page.getByText('Set Password')
+    const hasChangePassword = await changePassword.count()
+    const hasSetPassword = await setPassword.count()
+    expect(hasChangePassword + hasSetPassword).toBeGreaterThan(0)
+  })
+
+  test('shows new password and confirm password fields', async ({ page }) => {
+    await page.goto('/dashboard/settings')
+
+    await expect(page.getByLabel('New Password')).toBeVisible()
+    await expect(page.getByLabel('Confirm Password')).toBeVisible()
   })
 })
 
@@ -39,7 +88,19 @@ test.describe('Settings — Connected Accounts', () => {
     await page.goto('/dashboard/settings')
 
     await expect(page.getByText('Connected Accounts')).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Manage' })).toBeVisible()
+  })
+
+  test('shows Connect Google and Connect Apple buttons with icons', async ({ page }) => {
+    await page.goto('/dashboard/settings')
+
+    const googleBtn = page.getByRole('button', { name: 'Connect Google' })
+    const appleBtn = page.getByRole('button', { name: 'Connect Apple' })
+    await expect(googleBtn).toBeVisible()
+    await expect(appleBtn).toBeVisible()
+
+    // Buttons contain SVG icons
+    await expect(googleBtn.locator('svg')).toBeVisible()
+    await expect(appleBtn.locator('svg')).toBeVisible()
   })
 })
 
@@ -87,13 +148,13 @@ test.describe('Settings — Location & Timezone', () => {
     await page.getByLabel('Country').fill('New Zealand')
     await page.getByLabel('City').fill('Auckland')
 
-    await page.getByRole('button', { name: 'Save' }).click()
+    await page.getByRole('button', { name: 'Save' }).last().click()
 
     // Button shows loading state during Server Action
     await expect(page.getByRole('button', { name: 'Saving...' })).toBeDisabled()
 
     // After save completes, button reverts to "Save"
-    await expect(page.getByRole('button', { name: 'Save' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Save' }).last()).toBeVisible()
   })
 
   test('timezone dropdown shows grouped timezones', async ({ page }) => {

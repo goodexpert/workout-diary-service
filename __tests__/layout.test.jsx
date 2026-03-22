@@ -8,10 +8,18 @@ jest.mock("next/font/google", () => ({
 
 jest.mock("@clerk/nextjs", () => ({
   ClerkProvider: ({ children }) => <div>{children}</div>,
-  SignInButton: ({ children }) => children,
-  SignUpButton: ({ children }) => children,
-  Show: ({ children, when }) => <div data-testid={`show-${when}`}>{children}</div>,
-  UserButton: () => <div>UserButton</div>,
+  useUser: jest.fn().mockReturnValue({
+    user: null,
+    isLoaded: true,
+    isSignedIn: false,
+  }),
+  useClerk: jest.fn().mockReturnValue({
+    signOut: jest.fn(),
+  }),
+}));
+
+jest.mock("next/navigation", () => ({
+  useRouter: jest.fn().mockReturnValue({ push: jest.fn() }),
 }));
 
 jest.mock("@/components/ui/button", () => ({
@@ -30,6 +38,26 @@ jest.mock("@/components/ui/sonner", () => ({
   Toaster: () => null,
 }));
 
+jest.mock("@/components/ui/avatar", () => ({
+  Avatar: ({ children, ...props }) => <div {...props}>{children}</div>,
+  AvatarImage: ({ alt, ...props }) => <picture><img alt={alt} {...props} /></picture>,
+  AvatarFallback: ({ children, ...props }) => <span {...props}>{children}</span>,
+}));
+
+jest.mock("@/components/ui/dropdown-menu", () => ({
+  DropdownMenu: ({ children }) => <div>{children}</div>,
+  DropdownMenuTrigger: ({ children, ...props }) => <button {...props}>{children}</button>,
+  DropdownMenuContent: ({ children }) => <div>{children}</div>,
+  DropdownMenuItem: ({ children, ...props }) => <div {...props}>{children}</div>,
+}));
+
+jest.mock("lucide-react", () => ({
+  LayoutDashboard: () => <span>LayoutDashboard</span>,
+  Settings: () => <span>Settings</span>,
+  LogOut: () => <span>LogOut</span>,
+}));
+
+import { useUser } from "@clerk/nextjs";
 import RootLayout from "@/app/layout";
 
 // Suppress the expected DOM nesting warning (<html> inside <div>).
@@ -67,7 +95,7 @@ describe("RootLayout", () => {
     expect(screen.getByText("My Page Content")).toBeInTheDocument();
   });
 
-  it("renders sign in and sign up buttons for signed-out state", () => {
+  it("renders sign in and sign up links for signed-out state", () => {
     render(
       <RootLayout>
         <div>Content</div>
@@ -78,13 +106,24 @@ describe("RootLayout", () => {
     expect(screen.getByText("Sign Up")).toBeInTheDocument();
   });
 
-  it("renders UserButton for signed-in state", () => {
+  it("renders user avatar for signed-in state", () => {
+    useUser.mockReturnValue({
+      user: {
+        fullName: "John Doe",
+        firstName: "John",
+        lastName: "Doe",
+        imageUrl: "https://example.com/avatar.jpg",
+      },
+      isLoaded: true,
+      isSignedIn: true,
+    });
+
     render(
       <RootLayout>
         <div>Content</div>
       </RootLayout>
     );
 
-    expect(screen.getByText("UserButton")).toBeInTheDocument();
+    expect(screen.getByText("JD")).toBeInTheDocument();
   });
 });

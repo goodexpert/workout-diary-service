@@ -18,11 +18,18 @@ This app uses [Clerk](https://clerk.com/) for all authentication. Do not use any
 
 ### Client-Side Components
 
-- Use Clerk's prebuilt components for all auth UI — do not build custom sign-in/sign-up forms:
-  - `<SignInButton>` and `<SignUpButton>` for unauthenticated users
-  - `<UserButton>` for the signed-in user's avatar/menu
-  - `<Show when="signed-in">` / `<Show when="signed-out">` for conditional rendering based on auth state
-- Use `mode="modal"` on `<SignInButton>` and `<SignUpButton>` to keep users on the current page.
+- Custom auth pages replace Clerk's prebuilt UI:
+  - `/sign-in` — Custom sign-in page using `useSignIn()` hook (email/password + Google/Apple OAuth)
+  - `/sign-up` — Custom sign-up page using `useSignUp()` hook with email verification flow
+  - SSO callback pages at `/sign-in/sso-callback` and `/sign-up/sso-callback` handle OAuth redirects via `AuthenticateWithRedirectCallback`
+- The `<HeaderAuth />` component in the root layout handles signed-in/signed-out state:
+  - Signed out: Links to `/sign-in` and `/sign-up`
+  - Signed in: Avatar dropdown with Dashboard, Settings, and Sign Out
+- Profile management is inline on the Settings page using `useUser()`:
+  - Edit name via `user.update()`
+  - Upload avatar via `user.setProfileImage()`
+  - Change/set password via `user.updatePassword()` / `user.createPassword()`
+  - Connect/disconnect OAuth accounts via `user.createExternalAccount()` / `account.destroy()`
 
 ### Route Protection
 

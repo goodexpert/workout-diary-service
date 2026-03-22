@@ -32,7 +32,7 @@ jest.mock("@/components/ui/badge", () => ({
 
 jest.mock("@/components/ui/popover", () => ({
   Popover: ({ children }) => <div>{children}</div>,
-  PopoverTrigger: ({ children, render, nativeButton, ...props }) =>
+  PopoverTrigger: ({ children, render, ...props }) =>
     render ? <div {...props}>{React.cloneElement(render, {}, render.props.children)}</div> : <button {...props}>{children}</button>,
   PopoverContent: ({ children }) => <div>{children}</div>,
 }));

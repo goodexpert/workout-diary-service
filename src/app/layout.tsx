@@ -1,16 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import {
-  ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  Show,
-  UserButton,
-} from "@clerk/nextjs";
-import { Button } from "@/components/ui/button";
+import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SettingsInitializer } from "@/components/settings-initializer";
+import { HeaderAuth } from "@/components/header-auth";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -49,18 +43,8 @@ export default function RootLayout({
             <header className="flex items-center justify-between px-6 py-4">
               <h1 className="text-xl font-bold">Workout Diary</h1>
               <div className="flex items-center gap-4">
-                <Show when="signed-out">
-                  <SignInButton mode="modal">
-                    <Button variant="outline">Sign In</Button>
-                  </SignInButton>
-                  <SignUpButton mode="modal">
-                    <Button>Sign Up</Button>
-                  </SignUpButton>
-                </Show>
-                <Show when="signed-in">
-                  <UserButton />
-                  <SettingsInitializer />
-                </Show>
+                <HeaderAuth />
+                <SettingsInitializer />
               </div>
             </header>
             {children}

@@ -10,10 +10,11 @@ test.describe('Landing Page', () => {
     await expect(page.getByText('Track your workouts, log exercises and sets')).toBeVisible()
   })
 
-  test('shows Get Started sign-up CTA buttons', async ({ page }) => {
-    const buttons = page.getByRole('button', { name: 'Get Started' })
-    await expect(buttons).toHaveCount(2)
-    await expect(buttons.first()).toBeVisible()
+  test('shows Get Started CTA links to sign-up', async ({ page }) => {
+    const links = page.getByRole('link', { name: 'Get Started' })
+    await expect(links).toHaveCount(2)
+    await expect(links.first()).toBeVisible()
+    await expect(links.first()).toHaveAttribute('href', '/sign-up')
   })
 
   test('shows feature cards section', async ({ page }) => {
