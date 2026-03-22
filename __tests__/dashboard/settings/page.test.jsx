@@ -84,7 +84,7 @@ jest.mock("@/components/ui/card", () => ({
 
 jest.mock("@/components/ui/avatar", () => ({
   Avatar: ({ children, ...props }) => <div {...props}>{children}</div>,
-  AvatarImage: ({ alt, ...props }) => <img alt={alt} {...props} />,
+  AvatarImage: ({ alt, ...props }) => <picture><img alt={alt} {...props} /></picture>,
   AvatarFallback: ({ children, ...props }) => <span {...props}>{children}</span>,
 }));
 
@@ -93,7 +93,7 @@ jest.mock("@/components/ui/badge", () => ({
 }));
 
 jest.mock("@/components/ui/select", () => ({
-  Select: ({ children, value, onValueChange: _onValueChange }) => (
+  Select: ({ children, value }) => (
     <div data-testid="select" data-value={value}>
       {children}
     </div>

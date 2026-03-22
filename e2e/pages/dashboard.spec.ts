@@ -19,8 +19,8 @@ test.describe('Dashboard — Workout List', () => {
 
     await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible()
     // If workouts exist, cards appear as links with status badges
-    const cards = page.getByRole('link').filter({ hasText: /Completed|In progress/ })
-    // At least verify the list area renders (cards may or may not exist depending on data)
+    // If workouts exist, cards appear as links — at least verify the list area renders
+    page.getByRole('link').filter({ hasText: /Completed|In progress/ })
   })
 
   test('workout card shows name and time', async ({ page }) => {

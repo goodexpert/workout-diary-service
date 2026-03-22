@@ -3,7 +3,9 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 jest.mock("next/link", () => {
-  return ({ children, href }) => <a href={href}>{children}</a>;
+  const MockLink = ({ children, href }) => <a href={href}>{children}</a>;
+  MockLink.displayName = "MockLink";
+  return MockLink;
 });
 
 jest.mock("next/navigation", () => ({

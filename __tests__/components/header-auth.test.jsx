@@ -3,7 +3,9 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 jest.mock("next/link", () => {
-  return ({ children, href }) => <a href={href}>{children}</a>;
+  const MockLink = ({ children, href }) => <a href={href}>{children}</a>;
+  MockLink.displayName = "MockLink";
+  return MockLink;
 });
 
 jest.mock("next/navigation", () => ({
@@ -33,7 +35,7 @@ jest.mock("@/components/ui/button", () => ({
 
 jest.mock("@/components/ui/avatar", () => ({
   Avatar: ({ children, ...props }) => <div {...props}>{children}</div>,
-  AvatarImage: ({ alt, ...props }) => <img alt={alt} {...props} />,
+  AvatarImage: ({ alt, ...props }) => <picture><img alt={alt} {...props} /></picture>,
   AvatarFallback: ({ children, ...props }) => (
     <span {...props}>{children}</span>
   ),

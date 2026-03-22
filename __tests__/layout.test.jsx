@@ -40,7 +40,7 @@ jest.mock("@/components/ui/sonner", () => ({
 
 jest.mock("@/components/ui/avatar", () => ({
   Avatar: ({ children, ...props }) => <div {...props}>{children}</div>,
-  AvatarImage: ({ alt, ...props }) => <img alt={alt} {...props} />,
+  AvatarImage: ({ alt, ...props }) => <picture><img alt={alt} {...props} /></picture>,
   AvatarFallback: ({ children, ...props }) => <span {...props}>{children}</span>,
 }));
 
