@@ -1,13 +1,13 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 
-jest.mock("@clerk/nextjs", () => ({
-  SignUpButton: ({ children }) => children,
-}));
-
 jest.mock("next/navigation", () => ({
   redirect: jest.fn(),
 }));
+
+jest.mock("next/link", () => {
+  return ({ children, href }) => <a href={href}>{children}</a>;
+});
 
 jest.mock("@/lib/auth", () => ({
   getAuthenticatedUser: jest.fn(),

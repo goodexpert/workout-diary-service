@@ -11,8 +11,6 @@ jest.mock("next-themes", () => ({
   useTheme: jest.fn().mockReturnValue({ theme: "system", setTheme: jest.fn() }),
 }));
 
-const mockOpenUserProfile = jest.fn();
-
 jest.mock("@clerk/nextjs", () => ({
   useUser: jest.fn().mockReturnValue({
     user: {
@@ -21,19 +19,33 @@ jest.mock("@clerk/nextjs", () => ({
       lastName: "Doe",
       imageUrl: "https://example.com/avatar.jpg",
       primaryEmailAddress: { emailAddress: "john@example.com" },
+      passwordEnabled: true,
       externalAccounts: [
         {
           id: "ea_1",
           provider: "google",
           emailAddress: "john@gmail.com",
           verification: { status: "verified" },
+          destroy: jest.fn(),
         },
       ],
+      update: jest.fn(),
+      setProfileImage: jest.fn(),
+      updatePassword: jest.fn(),
+      createExternalAccount: jest.fn(),
     },
   }),
-  useClerk: () => ({
-    openUserProfile: mockOpenUserProfile,
-  }),
+}));
+
+jest.mock("@clerk/nextjs/errors", () => ({
+  isClerkAPIResponseError: jest.fn().mockReturnValue(false),
+}));
+
+jest.mock("sonner", () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+  },
 }));
 
 jest.mock("lucide-react", () => ({
@@ -41,7 +53,14 @@ jest.mock("lucide-react", () => ({
   Sun: () => <span>Sun</span>,
   Moon: () => <span>Moon</span>,
   Monitor: () => <span>Monitor</span>,
-  ExternalLink: () => <span>ExternalLink</span>,
+  Pencil: () => <span>Pencil</span>,
+  Camera: () => <span>Camera</span>,
+  Trash2: () => <span>Trash2</span>,
+}));
+
+jest.mock("@/components/icons", () => ({
+  GoogleIcon: (props) => <span data-testid="google-icon" {...props}>GoogleIcon</span>,
+  AppleIcon: (props) => <span data-testid="apple-icon" {...props}>AppleIcon</span>,
 }));
 
 jest.mock("@/components/ui/button", () => ({
@@ -99,6 +118,28 @@ import { useTheme } from "next-themes";
 import { useUser } from "@clerk/nextjs";
 import SettingsClient from "@/app/dashboard/settings/settings-client";
 
+const defaultUser = {
+  fullName: "John Doe",
+  firstName: "John",
+  lastName: "Doe",
+  imageUrl: "https://example.com/avatar.jpg",
+  primaryEmailAddress: { emailAddress: "john@example.com" },
+  passwordEnabled: true,
+  externalAccounts: [
+    {
+      id: "ea_1",
+      provider: "google",
+      emailAddress: "john@gmail.com",
+      verification: { status: "verified" },
+      destroy: jest.fn(),
+    },
+  ],
+  update: jest.fn(),
+  setProfileImage: jest.fn(),
+  updatePassword: jest.fn(),
+  createExternalAccount: jest.fn(),
+};
+
 describe("SettingsClient", () => {
   const defaultSettings = {
     country: null,
@@ -107,7 +148,7 @@ describe("SettingsClient", () => {
   };
 
   beforeEach(() => {
-    mockOpenUserProfile.mockClear();
+    useUser.mockReturnValue({ user: defaultUser });
   });
 
   it("renders the settings heading", () => {
@@ -152,6 +193,16 @@ describe("SettingsClient", () => {
     expect(screen.getByText("Connected")).toBeInTheDocument();
   });
 
+  it("renders provider icons in connected accounts and connect buttons", () => {
+    render(<SettingsClient settings={defaultSettings} />);
+    const googleIcons = screen.getAllByTestId("google-icon");
+    const appleIcons = screen.getAllByTestId("apple-icon");
+    // One in connected account row + one in Connect Google button
+    expect(googleIcons).toHaveLength(2);
+    // One in Connect Apple button
+    expect(appleIcons).toHaveLength(1);
+  });
+
   it("shows empty state when no external accounts", () => {
     useUser.mockReturnValue({
       user: {
@@ -160,7 +211,12 @@ describe("SettingsClient", () => {
         lastName: "Doe",
         imageUrl: "https://example.com/avatar.jpg",
         primaryEmailAddress: { emailAddress: "jane@example.com" },
+        passwordEnabled: false,
         externalAccounts: [],
+        update: jest.fn(),
+        setProfileImage: jest.fn(),
+        updatePassword: jest.fn(),
+        createExternalAccount: jest.fn(),
       },
     });
 
@@ -168,12 +224,30 @@ describe("SettingsClient", () => {
     expect(screen.getByText("No connected accounts")).toBeInTheDocument();
   });
 
-  it("calls openUserProfile when Manage Account is clicked", async () => {
-    const user = userEvent.setup();
+  it("renders Change Password section when password is enabled", () => {
     render(<SettingsClient settings={defaultSettings} />);
+    expect(screen.getByText("Change Password")).toBeInTheDocument();
+    expect(screen.getByLabelText("Current Password")).toBeInTheDocument();
+    expect(screen.getByLabelText("New Password")).toBeInTheDocument();
+    expect(screen.getByLabelText("Confirm Password")).toBeInTheDocument();
+  });
 
-    await user.click(screen.getByText("Manage Account"));
-    expect(mockOpenUserProfile).toHaveBeenCalled();
+  it("renders Set Password section when password is not enabled", () => {
+    useUser.mockReturnValue({
+      user: {
+        ...defaultUser,
+        fullName: "Jane Doe",
+        firstName: "Jane",
+        lastName: "Doe",
+        primaryEmailAddress: { emailAddress: "jane@example.com" },
+        passwordEnabled: false,
+        externalAccounts: [],
+      },
+    });
+
+    render(<SettingsClient settings={defaultSettings} />);
+    const headings = screen.getAllByText("Set Password");
+    expect(headings.length).toBeGreaterThanOrEqual(1);
   });
 
   it("renders Appearance section with theme buttons", () => {

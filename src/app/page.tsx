@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getAuthenticatedUser } from "@/lib/auth";
-import { SignUpButton } from "@clerk/nextjs";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Dumbbell, ListChecks, CalendarSearch } from "lucide-react";
@@ -29,11 +29,11 @@ export default async function Home() {
           Track your workouts, log exercises and sets, and review your fitness
           progress — all in one place.
         </p>
-        <SignUpButton mode="modal">
+        <Link href="/sign-up">
           <Button size="lg" className="mt-2 text-base">
             Get Started
           </Button>
-        </SignUpButton>
+        </Link>
       </section>
 
       {/* Features Section */}
@@ -94,11 +94,11 @@ export default async function Home() {
         <p className="text-muted-foreground">
           Sign up for free and begin tracking your workouts today.
         </p>
-        <SignUpButton mode="modal">
+        <Link href="/sign-up">
           <Button size="lg" className="mt-2 text-base">
             Get Started
           </Button>
-        </SignUpButton>
+        </Link>
       </section>
     </div>
   );
