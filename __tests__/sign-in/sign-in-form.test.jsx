@@ -53,6 +53,7 @@ jest.mock("@/components/ui/separator", () => ({
 jest.mock("@/components/icons", () => ({
   GoogleIcon: (props) => <span data-testid="google-icon" {...props} />,
   AppleIcon: (props) => <span data-testid="apple-icon" {...props} />,
+  FacebookIcon: (props) => <span data-testid="facebook-icon" {...props} />,
 }));
 
 import { useRouter } from "next/navigation";
@@ -100,8 +101,10 @@ describe("SignInForm", () => {
     render(<SignInForm />);
     expect(screen.getByText("Continue with Google")).toBeInTheDocument();
     expect(screen.getByText("Continue with Apple")).toBeInTheDocument();
+    expect(screen.getByText("Continue with Facebook")).toBeInTheDocument();
     expect(screen.getByTestId("google-icon")).toBeInTheDocument();
     expect(screen.getByTestId("apple-icon")).toBeInTheDocument();
+    expect(screen.getByTestId("facebook-icon")).toBeInTheDocument();
   });
 
   it("renders link to sign-up page", () => {
@@ -191,6 +194,19 @@ describe("SignInForm", () => {
     });
   });
 
+  it("calls authenticateWithRedirect for Facebook OAuth", async () => {
+    const user = userEvent.setup();
+    render(<SignInForm />);
+
+    await user.click(screen.getByText("Continue with Facebook"));
+
+    expect(mockAuthenticateWithRedirect).toHaveBeenCalledWith({
+      strategy: "oauth_facebook",
+      redirectUrl: "/sign-in/sso-callback",
+      redirectUrlComplete: "/dashboard",
+    });
+  });
+
   it("disables buttons when not loaded", () => {
     useSignIn.mockReturnValue({
       signIn: { create: mockCreate, authenticateWithRedirect: mockAuthenticateWithRedirect },
@@ -202,6 +218,7 @@ describe("SignInForm", () => {
 
     expect(screen.getByText("Continue with Google")).toBeDisabled();
     expect(screen.getByText("Continue with Apple")).toBeDisabled();
+    expect(screen.getByText("Continue with Facebook")).toBeDisabled();
     expect(screen.getByRole("button", { name: "Sign In" })).toBeDisabled();
   });
 
