@@ -1,20 +1,14 @@
 import { redirect } from "next/navigation";
-import { getAuthenticatedUser } from "@/lib/auth";
+import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Dumbbell, ListChecks, CalendarSearch } from "lucide-react";
 
 export default async function Home() {
-  let isAuthenticated = false;
-  try {
-    await getAuthenticatedUser();
-    isAuthenticated = true;
-  } catch {
-    // User is not authenticated, continue to render homepage
-  }
+  const { userId } = await auth();
 
-  if (isAuthenticated) {
+  if (userId) {
     redirect("/dashboard");
   }
 

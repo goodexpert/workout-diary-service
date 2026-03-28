@@ -21,5 +21,11 @@
       "mcp__neon__run_sql",
       "mcp__neon__run_sql_transaction"
     ]
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true,
+    "vercel@claude-plugins-official": true
   }
 }
