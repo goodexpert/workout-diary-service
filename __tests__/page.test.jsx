@@ -11,8 +11,8 @@ jest.mock("next/link", () => {
   return MockLink;
 });
 
-jest.mock("@/lib/auth", () => ({
-  getAuthenticatedUser: jest.fn(),
+jest.mock("@clerk/nextjs/server", () => ({
+  auth: jest.fn(),
 }));
 
 jest.mock("@/components/ui/button", () => ({
@@ -33,13 +33,13 @@ jest.mock("lucide-react", () => ({
 }));
 
 import { redirect } from "next/navigation";
-import { getAuthenticatedUser } from "@/lib/auth";
+import { auth } from "@clerk/nextjs/server";
 import Home from "@/app/page";
 
 describe("Home", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    getAuthenticatedUser.mockRejectedValue(new Error("Not authenticated"));
+    auth.mockResolvedValue({ userId: null });
   });
 
   it("renders the home page", async () => {
@@ -61,7 +61,7 @@ describe("Home", () => {
   });
 
   it("redirects to dashboard when authenticated", async () => {
-    getAuthenticatedUser.mockResolvedValue({ id: "user-1" });
+    auth.mockResolvedValue({ userId: "user-1" });
 
     await Home();
 
